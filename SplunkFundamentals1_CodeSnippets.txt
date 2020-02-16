@@ -1,0 +1,300 @@
+Chapter 1: Getting Started
+
+
+Controlling Splunk
+
+p. 23
+
+cd c:\Splunk\bin
+
+splunk restart
+
+
+Viewing the Destinations App
+
+p. 27
+
+index=main
+
+Creating your First Dashboard
+
+p. 28
+
+index=main "/booking/confirmation" earliest=-24h@h | timechart count span=15m
+
+
+
+
+
+Chapter 3: Search Processing Language
+
+p. 57
+
+index=main earliest=-8m latest=now | timechart count span=1m
+
+p. 58
+index=main /booking/confirmation
+
+index=main /booking 200
+
+index=main /booking AND 200
+
+index=main /booking OR /destinations
+
+index=main (/booking OR /destinations) AND 200
+
+index=main "iPhone OS"
+
+index=main http_uri=/booking/confirmation AND http_status_code=200
+
+Stats command
+p. 59
+
+index=main earliest=-30m latest=now | stats count 
+
+index=main earliest=-15m latest=now | stats count
+
+index=main | stats count by http_method
+
+index=main | stats count by http_uri | stats avg(count)
+
+top/rare commands
+p. 60
+
+index=main | top http_uri
+
+index=main | top http_uri limit=5 showperc=false
+
+index=main | rare http_uri
+
+index=main | rare http_uri limit=5 showperc=false
+
+chart, timechart commands
+p. 61
+
+index=main | chart count by http_method
+
+index=main | stats count by http_method http_uri
+
+index=main | chart count by http_method http_uri
+
+index=main earliest=-4h latest=now | timechart span=15m count by http_uri
+
+eval command
+p. 64
+
+index=main earliest=-4h latest=now |
+
+index=main earliest=-1h latest=now | stats count(eval(if(http_status_code < "400", 1, NULL))) AS successful_requests count(eval(if(http_status_code >= "400", 1, NULL))) AS unsuccessful_requests by http_status_code
+
+index=main | top http_uri
+
+index=main | top http_uri | eval percent=round(percent,2)
+
+index=main | top http_uri | eval http_uri=upper(http_uri)
+
+index=main | top http_uri | eval http_uri=upper(http_uri)
+
+index=main | top http_uri showperc=false limit=0 | eval Tag=case(http_uri=="/booking/payment","Payment",http_uri=="/auth","Authorization")
+
+rex command
+p. 66
+
+
+** Module 4: Reporting, Alerts, and Search Optimization
+
+p. 70
+
+index=main http_uri=/booking/confirmation http_status_code=200
+
+index=main http_uri=/booking/confirmation http_status_code=500
+
+eventtype=*bookings
+
+p. 72
+
+eventtype=*bookings | stats count by eventtype
+
+p. 73
+
+index=main http_uri=/booking/payment http_status_code=200
+
+index=main http_uri=/booking/payment http_status_code=500
+
+index=main http_uri=/destination/*/details
+
+index=main http_uri=/auth http_status_code=500
+
+Data Normalization with Tags
+
+p. 74
+
+index=main server_ip=10.2.1.33
+
+p. 75
+
+index=main tag=patched OR tag=east
+
+index=main server_ip=10.2.1.33 OR server_ip=10.2.1.35 AND (http_uri=/booking/payment http_status_code=500)
+
+p. 76
+
+eventtype=bad_payment tag=east
+
+http_uri=/destination/LAX/details
+
+http_uri=/destination/NY/details
+
+http_uri=/destination/MIA/details
+
+http_status_code=301
+
+http_status_code=404
+
+eventtype=destination_details tag=major_destination tag=not_found
+
+
+Data Enrichment with Lookups
+
+p. 79
+
+eventtype=destination_details | top http_status_code
+
+p. 80
+
+eventtype=destination_details | top http_status_code | rename http_status_code AS status | lookup http_status status OUTPUT status_description, status_type
+
+eventtype=destination_details | regex http_status_code=^\d+$ | top http_status_code | rename http_status_code AS status | lookup http_status status OUTPUT status_description, status_type
+
+p. 81
+
+eventtype=destination_details status_type=Redirection
+
+
+Creating and Scheduling Reports
+
+p. 82
+
+eventtype=bad_logins | top client_ip
+
+Creating Alerts
+
+p. 87
+
+eventtype=bad_bookings
+
+p. 93
+
+eventtype=bad_payment
+
+Summary Indexing
+
+p. 96
+
+eventtype=bad_payment | stats count
+
+Dynamic Form-Based Dashboards
+
+p. 104
+
+index=main status_type="*" http_uri="*" server_ip="*" | top status_type, status_description, http_uri, server_ip
+
+p. 106
+
+index=main status_type="*" http_uri="*" server_ip="*" | top status_type
+
+P. 107
+
+index=main status_type="*" http_uri="*" server_ip="*" | timechart count by http_status_code
+
+p. 108
+
+index=main status_type="*" http_uri="*" server_ip="*" | timechart count, avg(http_response_time) as response_time
+
+p. 121
+
+index=main | top server_ip
+
+p. 123
+
+index=main | top status_type
+
+p. 124
+
+index=main status_type=$status_type$ http_uri="*" server_ip=$server$ | top status_type, status_description, http_uri, server_ip
+
+p. 125
+
+index=main status_type=$status_type$ http_uri="*" server_ip=$server$ | top status_type
+
+index=main status_type=$status_type$ http_uri="*" server_ip=$server$ | timechart count by http_status_code
+
+index=main status_type=$status_type$ http_uri="*" server_ip=$server$ | timechart count, avg(http_response_time) as response_time
+
+p. 128
+
+index=main status_type=$status_type$ http_uri=$http_uri$ server_ip=$server$ | top status_type, status_description, http_uri, server_ip
+
+index=main status_type=$status_type$ http_uri=$http_uri$ server_ip=$server$ | top status_type
+
+index=main status_type=$status_type$ http_uri=$http_uri$ server_ip=$server$ | timechart count by http_status_code
+
+index=main status_type=$status_type$ http_uri=$http_uri$ server_ip=$server$ | timechart count, avg(http_response_time) as response_time
+
+Static Real-time Dashboards
+
+p. 130
+
+index=main http_uri=/booking/confirmation http_status_code=200 | stats count
+
+p. 134
+
+index=main http_uri=/booking/reservation http_status_code=200 | stats count
+
+p. 135
+
+index=main http_status_code=5* | timechart count
+
+p. 138
+
+index=main | timechart count, avg(http_response_time) as response_time
+
+p. 139
+
+index=main http_uri=/booking/reservation OR http_uri=/booking/confirmation | timechart count by http_uri | rename /booking/confirmation AS Confirmation, /booking/reservation AS Reservation | eval Conversion=Reservation/Confirmation | fields _time, Reservation, Confirmation, Conversion
+
+p. 141
+
+# NOTE: The original code from the book does not account for a large number of ip addresses that are represented in the sample data that don't have matching locations
+# This is the original code:
+
+index=main | iplocation client_ip | stats count by Region | rename Region as featureId | geom geo_us_states
+
+# This code filters out the blank locations, and thus gives a more satisfying result
+
+index=main | iplocation client_ip | search Region!="" | stats count by Region | rename Region as featureId | geom geo_us_states
+
+p. 142
+
+index=main http_uri=/booking/confirmation http_status_code=200 | iplocation client_ip | search Region!="" | stats count by Region | rename Region as featureId | geom geo_us_states
+
+Creating child objects
+
+p. 149
+
+http_uri="/auth"
+
+http_uri="/booking/confirmation"
+
+http_uri="/booking/payment"
+
+http_uri="/destination/*/details"
+
+http_uri="/destination/search"
+
+Creating an attribute based on a regular expression
+
+p. 150
+
+/destination/(?<AirportCode>.+?)/details
+
