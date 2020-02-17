@@ -99,6 +99,9 @@ index=main | top http_uri showperc=false limit=0 | eval Tag=case(http_uri=="/boo
 
 rex command
 p. 66
+!! NOTE: The text in the book is incorrect for this command. The following is the corrected version:
+
+index=main http_user_agent="*Chrome*" | rex field=http_user_agent "Chrome/ ?(?<Chrome_Version>.+?) ?Safari" | top Chrome_Version
 
 
 ** Module 4: Reporting, Alerts, and Search Optimization
