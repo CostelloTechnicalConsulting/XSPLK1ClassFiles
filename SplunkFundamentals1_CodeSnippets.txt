@@ -1,3 +1,12 @@
+************************************
+************************************
+Splunk Fundamentals 1 Code Snippets
+Version 1.0
+26 April 2020
+Maintained by: Dan Costello (danc@onlc.com)
+************************************
+************************************
+
 Chapter 1: Getting Started
 
 
@@ -27,6 +36,9 @@ index=main "/booking/confirmation" earliest=-24h@h | timechart count span=15m
 
 
 Chapter 3: Search Processing Language
+
+p. 54
+index=_internal sourcetype=splunk* | top limit=5 name | sort - name
 
 p. 57
 

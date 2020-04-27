@@ -1,4 +1,6 @@
-﻿$testRoot = "C:\splunk-essentials-master\Chapter01\eventgen"
+﻿#$testRoot = "C:\splunk-essentials-master\Chapter01\eventgen"
+$testRoot = "C:\XSPLK1ClassFiles\Scripts\SampleData"
+
 $logRoot = "C:\XSPLK1ClassFiles\Logs"
 
 $URIS = Import-Csv $testRoot\destinations-uris.sample -Header verb, URI
