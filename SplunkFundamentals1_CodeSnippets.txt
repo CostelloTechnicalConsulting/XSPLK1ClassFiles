@@ -192,6 +192,14 @@ p. 82
 
 eventtype=bad_logins | top client_ip
 
+p. 86
+
+eventtype=bad_payment | top client_ip 
+
+
+eventtype=good_bookings | timechart span=1h count
+
+
 Creating Alerts
 
 p. 87
